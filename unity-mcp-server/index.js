@@ -133,6 +133,16 @@ const tools = [
     }
   },
   {
+    name: "take_unity_screenshot",
+    description: "Capture a visual snapshot of the Unity Editor. Useful for the AI to see the result of its work.",
+    inputSchema: { type: "object", properties: {} }
+  },
+  {
+    name: "get_unity_scene_graph",
+    description: "Get a comprehensive structural map of the scene, including object names, tags, and active states.",
+    inputSchema: { type: "object", properties: {} }
+  },
+  {
     name: "list_unity_scene",
     description: "Scan the current scene for all object names.",
     inputSchema: { type: "object", properties: {} }
@@ -205,6 +215,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           name: args.name,
           text: args.text
         };
+        break;
+      case "take_unity_screenshot":
+        body = { command: "TAKE_SCREENSHOT" };
+        break;
+      case "get_unity_scene_graph":
+        body = { command: "GET_SCENE_GRAPH" };
         break;
       case "list_unity_scene":
         body = { command: "LIST_SCENE" };
