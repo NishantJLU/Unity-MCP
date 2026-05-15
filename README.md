@@ -34,24 +34,23 @@ Transform your project into a dynamic experience. The AI can:
 - **Unity Editor:** Compatible with Unity 2021.x and newer.
 - **MCP Client:** (e.g., [Claude Desktop](https://claude.ai/download)).
 
----
-
 ### 📦 Installation
 
-1.  **Clone & Setup:**
+1.  **Clone the Repository:**
     ```bash
     git clone https://github.com/NishantJLU/Unity-MCP.git
     cd Unity-MCP
     ```
 2.  **Unity Integration:**
-    *   Copy the `unity/` folder into your Unity `Assets/Editor` directory.
+    *   Copy the `unity/` folder from this repo into your Unity project's `Assets/Editor` directory.
     *   In Unity, go to **Window > AI > Game Master Bridge**.
     *   Click **Start GM Bridge**.
 
 3.  **MCP Server Setup:**
-    *   Navigate to `server/`.
+    *   Navigate to the `server/` directory in this repo.
     *   Run `npm install` and `npm run build`.
-    *   Add to your MCP config:
+    *   Add the following to your MCP client configuration (e.g., `claude_desktop_config.json`):
+
     ```json
     {
       "mcpServers": {
@@ -62,6 +61,40 @@ Transform your project into a dynamic experience. The AI can:
       }
     }
     ```
+
+---
+
+## ⚙️ Advanced Configuration: Game Master Presets
+
+The Game Master's true power comes from the **Preset System**. Located at `unity/Resources/GMPresets.json`, this file defines the "DNA" of entities the AI can spawn.
+
+```json
+{
+  "presets": [
+    {
+      "id": "shadow_wraith",
+      "displayName": "Shadow Wraith",
+      "type": "Monster",
+      "scale": 1.5,
+      "color": [0.1, 0, 0.2, 0.8],
+      "components": ["Rigidbody", "Light"]
+    }
+  ]
+}
+```
+
+*   **id:** The unique identifier used by the AI (via `spawn_entity`).
+*   **type:** Base primitive type (`NPC`, `Monster`, `Prop`).
+*   **components:** Unity components to be automatically added to the spawned object.
+
+---
+
+## 🏗️ Internal Architecture
+
+1.  **Node.js Server (MCP):** Acts as the "Brain." It validates AI tool calls using Zod schemas and translates them into a JSON command protocol.
+2.  **HTTP Local Bridge:** The Unity Editor hosts a lightweight `HttpListener` on port `60432`.
+3.  **Command Dispatcher:** Unity receives the JSON, and the `EditorApplication.delayCall` ensures commands are executed on the **Unity Main Thread**.
+4.  **C# Reflection:** The bridge uses `System.Reflection` to dynamically find and invoke methods, allowing for deep control without pre-defined API endpoints.
 
 ---
 
