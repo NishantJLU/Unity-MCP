@@ -1,0 +1,23 @@
+{
+  "presets": [
+    {
+      "id": "shadow_wraith",
+      "displayName": "Shadow Wraith",
+      "type": "Monster",
+      "scale": 1.5,
+      "color": [0.1, 0, 0.2, 0.8],
+      "components": ["Rigidbody", "Light"],
+      "lightColor": [0.5, 0, 1],
+      "lightIntensity": 2.5
+    },
+    {
+      "id": "village_elder",
+      "displayName": "Sage Elara",
+      "type": "NPC",
+      "scale": 1.0,
+      "color": [0.8, 0.7, 0.5, 1],
+      "components": ["BoxCollider"],
+      "initialDialogue": "The stars are cold tonight, traveler."
+    }
+  ]
+}
