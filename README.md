@@ -1,58 +1,81 @@
-# Unity Game Master MCP 🎮🧙‍♂️
+# 🌌 Unity-MCP Pro: The Agentic Unity Bridge & Game Master 🎮🧙‍♂️
 
-Transform your Unity project into a living world managed by an AI Game Master. This project provides a **Model Context Protocol (MCP)** server that allows LLMs (like Claude, GPT-4, or Gemini) to observe and manipulate a Unity game in real-time.
+[![Status: Production Ready](https://img.shields.io/badge/Status-Production--Ready-00f2ff?style=for-the-badge)](https://github.com/NishantJLU/Unity-MCP)
+[![Platform: Unity Editor](https://img.shields.io/badge/Platform-Unity_Editor-ff007f?style=for-the-badge)](https://unity.com/)
+[![Protocol: MCP](https://img.shields.io/badge/Protocol-MCP-yellow?style=for-the-badge)](https://modelcontextprotocol.io/)
 
-## 🚀 Features
+**Unity-MCP Pro** is a high-performance bridge that transforms the Unity Editor into an agentic environment and a living world managed by an AI Game Master. It enables Large Language Models (LLMs) like Claude 3.5 Sonnet and Gemini 1.5 Pro to interact with Unity in real-time.
 
--   **World Observation:** The LLM can query player health, inventory, location, and active quests.
--   **Entity Spawning:** Dynamically spawn NPCs, monsters, or props with custom names and positions.
--   **Dialogue Injection:** The GM can set dialogue and moods for any NPC in the scene.
--   **Global Events:** Trigger environmental changes, weather, or boss encounters via natural language.
--   **Scene Awareness:** Tools for the LLM to "scan" nearby entities and understand the spatial context.
+---
 
-## 🛠️ Tech Stack
+## 💎 Features
 
--   **Server:** Node.js, TypeScript, MCP SDK, Zod (Validation), Axios.
--   **Unity:** C#, Unity Editor Scripting, HttpListener (for the local bridge).
+### 🧙‍♂️ AI Game Master System
+Transform your project into a dynamic experience. The AI can:
+*   **Observe World State:** Query player health, location, and active quests.
+*   **Spawn Entities:** Dynamically create NPCs, monsters, or props using a **JSON Preset System**.
+*   **Narrative Broadcasting:** Send "flavor text" and atmospheric descriptions directly to the game.
+*   **Dialogue Injection:** Set dialogue and moods for NPCs in the scene.
 
-## 📦 Installation
+### 👁️ AI Vision & Scene Analytics
+*   **Visual Feedback:** Use screenshots to allow the AI to reason about aesthetics and layouts.
+*   **Scene Graph:** Structured JSON map of the entire hierarchy, tags, and states.
 
-### 1. Unity Side
-1.  Copy the `unity/UnityGameMasterBridge.cs` file into your Unity project's `Assets/Editor` folder.
-2.  In Unity, go to `Window > AI > Game Master Bridge`.
-3.  Click **Start GM Bridge**.
+### ⚡ Reflection-Based Control & Safety
+*   **Universal Property Tweaking:** Modify *any* public property on *any* component via C# Reflection.
+*   **Main-Thread Dispatcher:** Robust execution on Unity's main thread to prevent automation crashes.
 
-### 2. MCP Server Side
-1.  Navigate to the `server/` directory.
-2.  Run `npm install` to install dependencies.
-3.  Run `npm run build` to compile the TypeScript code.
-4.  Configure your MCP-compatible LLM client (e.g., Claude Desktop) to use the server:
+---
 
-```json
-{
-  "mcpServers": {
-    "unity-game-master": {
-      "command": "node",
-      "args": ["C:/path/to/unity-game-master/server/build/index.js"]
+## 🛠️ Setup Guide
+
+### 📋 Prerequisites
+- **Node.js (v18+):** Required to run the MCP server.
+- **Unity Editor:** Compatible with Unity 2021.x and newer.
+- **MCP Client:** (e.g., [Claude Desktop](https://claude.ai/download)).
+
+---
+
+### 📦 Installation
+
+1.  **Clone & Setup:**
+    ```bash
+    git clone https://github.com/NishantJLU/Unity-MCP.git
+    cd Unity-MCP
+    ```
+2.  **Unity Integration:**
+    *   Copy the `unity/` folder into your Unity `Assets/Editor` directory.
+    *   In Unity, go to **Window > AI > Game Master Bridge**.
+    *   Click **Start GM Bridge**.
+
+3.  **MCP Server Setup:**
+    *   Navigate to `server/`.
+    *   Run `npm install` and `npm run build`.
+    *   Add to your MCP config:
+    ```json
+    {
+      "mcpServers": {
+        "unity-game-master": {
+          "command": "node",
+          "args": ["C:/PATH/TO/REPO/server/build/index.js"]
+        }
+      }
     }
-  }
-}
-```
+    ```
 
-## 🧪 Example Commands for the LLM
+---
 
--   "Check the player's current health and location."
--   "Spawn a Mysterious Stranger near the player and set his dialogue to 'Wait! You shouldn't have come here...'"
--   "Trigger a thunder storm with high intensity."
--   "Find all monsters within 20 meters and describe them."
+## 🎮 Example Commands
 
-## 🗺️ Roadmap
+- *"Check the player's health and spawn a 'shadow_wraith' if it's above 80%."*
+- *"Take a screenshot and tell me if the lighting looks too dramatic."*
+- *"Broadcast a message: 'The ground begins to tremble...' and spawn 3 monsters near the player."*
+- *"Set the Village Elder's dialogue to 'The stars are cold tonight' with a Mysterious mood."*
 
--   [ ] **Quest System Integration:** Allow the LLM to create and track complex quest chains.
--   [ ] **Procedural Generation:** GM-directed placement of dungeon rooms or loot.
--   [ ] **Multi-Agent GM:** Multiple LLMs acting as different factions in the world.
--   [ ] **Visual Debugger:** An in-game console showing the GM's logic and commands.
+---
 
-## 📄 License
+## 📜 License
+Distributed under the **MIT License**.
 
-MIT
+---
+*Bridging the gap between LLMs and Real-time Game Engines.*
