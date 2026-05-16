@@ -17,13 +17,12 @@ Transform your project into a dynamic experience. The AI can:
 *   **Narrative Broadcasting:** Send "flavor text" and atmospheric descriptions directly to the game.
 *   **Dialogue Injection:** Set dialogue and moods for NPCs in the scene.
 
-### 👁️ AI Vision & Scene Analytics
-*   **Visual Feedback:** Use screenshots to allow the AI to reason about aesthetics and layouts.
-*   **Scene Graph:** Structured JSON map of the entire hierarchy, tags, and states.
-
-### ⚡ Reflection-Based Control & Safety
-*   **Universal Property Tweaking:** Modify *any* public property on *any* component via C# Reflection.
-*   **Main-Thread Dispatcher:** Robust execution on Unity's main thread to prevent automation crashes.
+### ⚡ Extensibility & Safety (New in v1.1.0)
+*   **Attribute-Based Command Dispatching:** Easily add new AI tools directly in C# using `[MCPTool("command_name")]`. No switch statements needed!
+*   **Undo Support:** All AI actions automatically register with Unity's Undo system (`Ctrl+Z`).
+*   **Robust Security:** The bridge explicitly binds to `127.0.0.1` (localhost) and supports an **API Key** required for authorization via `X-MCP-Token`.
+*   **LOD Scene Query:** Level of Detail for scene querying. Query only the objects within a radius instead of dumping the whole scene.
+*   **Asset Searching:** Allow the AI to search the `AssetDatabase` to find specific materials, prefabs, or scripts on the fly.
 
 ---
 
@@ -36,31 +35,67 @@ Transform your project into a dynamic experience. The AI can:
 
 ### 📦 Installation
 
-1.  **Clone the Repository:**
+#### 1. Unity Package Installation (UPM)
+Instead of copying files manually, install it as a Unity Package.
+*   In Unity, go to **Window > Package Manager**.
+*   Click the **+** icon in the top-left corner.
+*   Select **Add package from git URL...**
+*   Enter: `https://github.com/NishantJLU/Unity-MCP.git?path=/unity`
+*   Once installed, go to **Window > AI > Game Master Bridge**.
+*   Click **Start GM Bridge**. Note the **API Key** generated in the window.
+
+#### 2. MCP Server Setup
+*   Clone the repo locally for the server part:
     ```bash
     git clone https://github.com/NishantJLU/Unity-MCP.git
-    cd Unity-MCP
+    cd Unity-MCP/server
+    npm install
+    npm run build
     ```
-2.  **Unity Integration:**
-    *   Copy the `unity/` folder from this repo into your Unity project's `Assets/Editor` directory.
-    *   In Unity, go to **Window > AI > Game Master Bridge**.
-    *   Click **Start GM Bridge**.
-
-3.  **MCP Server Setup:**
-    *   Navigate to the `server/` directory in this repo.
-    *   Run `npm install` and `npm run build`.
-    *   Add the following to your MCP client configuration (e.g., `claude_desktop_config.json`):
+*   Add the following to your MCP client configuration (e.g., `claude_desktop_config.json`), making sure to supply the API key via environment variable:
 
     ```json
     {
       "mcpServers": {
         "unity-game-master": {
           "command": "node",
-          "args": ["C:/PATH/TO/REPO/server/build/index.js"]
+          "args": ["C:/PATH/TO/REPO/server/build/index.js"],
+          "env": {
+            "UNITY_MCP_API_KEY": "YOUR_API_KEY_FROM_UNITY_WINDOW"
+          }
         }
       }
     }
     ```
+
+---
+
+## 📚 Tool Schema (API Reference)
+
+The following MCP tools are available to the LLM:
+
+*   **`get_game_state`**: Get the current state of the game world (time, player location, health).
+*   **`get_presets`**: List available entity presets defined in the Unity project.
+*   **`spawn_entity`**: Spawn an NPC, monster, or prop into the scene.
+    *   Parameters: `type` (NPC/Monster/Prop), `name` (string), `preset` (optional string), `position` (optional float[3]).
+*   **`trigger_world_event`**: Trigger a global event like weather changes, music shifts, or boss spawns.
+    *   Parameters: `event_name` (string), `intensity` (0-1).
+*   **`broadcast_narrative`**: Send a narrative message or flavor text to the screen.
+    *   Parameters: `message` (string), `style` (Standard/Warning/Epic/Whisper).
+*   **`set_npc_dialogue`**: Set dialogue and mood for an NPC.
+    *   Parameters: `target_name` (string), `text` (string), `mood` (Neutral/Angry/Happy/Mysterious).
+*   **`query_nearby_entities`**: Scan the area around the active scene view for interactable objects.
+    *   Parameters: `radius` (float, default 20).
+*   **`search_assets`**: Search the Unity Asset Database.
+    *   Parameters: `query` (string, e.g., 't:Prefab', 't:Material', or name).
+
+---
+
+## 🚨 Troubleshooting
+
+*   **Port Conflicts:** The bridge runs on port `60432`. If the bridge fails to start, another application may be using this port. Change it in the C# source or close the conflicting application.
+*   **Unauthorized Errors:** If the Node.js server connects but Unity rejects commands, ensure the `UNITY_MCP_API_KEY` environment variable in your MCP client config perfectly matches the API Key displayed in the Unity GM Bridge window.
+*   **Main Thread Bottlenecks:** Be careful querying massive radii using `query_nearby_entities`, as it runs on the main thread and can cause editor hitches if retrieving thousands of objects.
 
 ---
 
@@ -82,28 +117,6 @@ The Game Master's true power comes from the **Preset System**. Located at `unity
   ]
 }
 ```
-
-*   **id:** The unique identifier used by the AI (via `spawn_entity`).
-*   **type:** Base primitive type (`NPC`, `Monster`, `Prop`).
-*   **components:** Unity components to be automatically added to the spawned object.
-
----
-
-## 🏗️ Internal Architecture
-
-1.  **Node.js Server (MCP):** Acts as the "Brain." It validates AI tool calls using Zod schemas and translates them into a JSON command protocol.
-2.  **HTTP Local Bridge:** The Unity Editor hosts a lightweight `HttpListener` on port `60432`.
-3.  **Command Dispatcher:** Unity receives the JSON, and the `EditorApplication.delayCall` ensures commands are executed on the **Unity Main Thread**.
-4.  **C# Reflection:** The bridge uses `System.Reflection` to dynamically find and invoke methods, allowing for deep control without pre-defined API endpoints.
-
----
-
-## 🎮 Example Commands
-
-- *"Check the player's health and spawn a 'shadow_wraith' if it's above 80%."*
-- *"Take a screenshot and tell me if the lighting looks too dramatic."*
-- *"Broadcast a message: 'The ground begins to tremble...' and spawn 3 monsters near the player."*
-- *"Set the Village Elder's dialogue to 'The stars are cold tonight' with a Mysterious mood."*
 
 ---
 

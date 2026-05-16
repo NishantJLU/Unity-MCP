@@ -9,7 +9,8 @@ import {
 import axios from "axios";
 import { z } from "zod";
 
-const UNITY_URL = "http://localhost:60432/";
+const UNITY_URL = "http://127.0.0.1:60432/";
+const API_KEY = process.env.UNITY_MCP_API_KEY || ""; 
 
 // Validation Schemas
 const CreateEntitySchema = z.object({
@@ -29,6 +30,14 @@ const SetDialogueSchema = z.object({
   target_name: z.string(),
   text: z.string(),
   mood: z.enum(["Neutral", "Angry", "Happy", "Mysterious"]).optional(),
+});
+
+const QueryNearbySchema = z.object({
+  radius: z.number().default(20),
+});
+
+const SearchAssetsSchema = z.object({
+  query: z.string().describe("Search query for assets like 't:Material', 't:Prefab', or a name"),
 });
 
 class UnityGMServer {
@@ -125,6 +134,17 @@ class UnityGMServer {
             },
           },
         },
+        {
+          name: "search_assets",
+          description: "Search the Unity Asset Database for assets.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              query: { type: "string", description: "Query like 't:Prefab', 't:Material' or specific name" },
+            },
+            required: ["query"],
+          },
+        },
       ],
     }));
 
@@ -163,14 +183,25 @@ class UnityGMServer {
             break;
 
           case "query_nearby_entities":
-            unityCommand = { command: "QUERY_NEARBY", data: args || {} };
+            const queryArgs = QueryNearbySchema.parse(args || {});
+            unityCommand = { command: "QUERY_NEARBY", data: queryArgs };
+            break;
+
+          case "search_assets":
+            const searchArgs = SearchAssetsSchema.parse(args);
+            unityCommand = { command: "SEARCH_ASSETS", data: searchArgs };
             break;
 
           default:
             throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
         }
 
-        const response = await axios.post(UNITY_URL, unityCommand, { timeout: 5000 });
+        const response = await axios.post(UNITY_URL, unityCommand, { 
+          timeout: 5000,
+          headers: {
+            "X-MCP-Token": API_KEY
+          }
+        });
         return {
           content: [{ type: "text", text: JSON.stringify(response.data, null, 2) }],
         };

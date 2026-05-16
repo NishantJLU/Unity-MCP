@@ -1,0 +1,10 @@
+{
+  "name": "com.nishantjlu.unity-mcp",
+  "version": "1.0.0",
+  "displayName": "Unity MCP Bridge",
+  "description": "Connects Unity Editor to MCP Servers for AI-driven development.",
+  "unity": "2021.3",
+  "author": {
+    "name": "Nishant"
+  }
+}
