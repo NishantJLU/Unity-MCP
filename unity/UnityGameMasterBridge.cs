@@ -299,6 +299,18 @@ namespace UnityGM
             return "{\"status\":\"success\", \"assets\":" + JsonUtility.ToJson(new StringListWrapper { list = paths }) + "}";
         }
 
+        [MCPTool("HEALTH_CHECK")]
+        private string HealthCheck(GMData data)
+        {
+            return JsonUtility.ToJson(new {
+                status = "success",
+                unity_version = Application.unityVersion,
+                platform = Application.platform.ToString(),
+                memory_usage = System.GC.GetTotalMemory(false) / (1024 * 1024) + " MB",
+                is_editor = Application.isEditor
+            });
+        }
+
         private void SendResponse(HttpListenerContext context, string response, int statusCode = 200)
         {
             try {
