@@ -99,6 +99,21 @@ The following MCP tools are available to the LLM:
 
 ---
 
+## 🗺️ Visual Roadmap
+
+| Status | Feature | Description |
+| :--- | :--- | :--- |
+| ✅ | **UPM Support** | Installable via Unity Package Manager (Git URL). |
+| ✅ | **Dynamic Dispatch** | Attribute-based tool registration (`[MCPTool]`). |
+| ✅ | **Auth & Security** | Localhost binding & API Key (`X-MCP-Token`). |
+| ✅ | **Undo System** | AI actions support `Ctrl+Z` in Unity Editor. |
+| 🚧 | **WebSockets** | Real-time push events from Unity to the AI. |
+| 🚧 | **Enhanced Vision** | Optimized screenshot capture & UI layout reasoning. |
+| 📅 | **Spatial LOD 2.0** | Frustum-based scene querying (Visible objects only). |
+| 📅 | **Prefab Library** | Custom Editor window for AI-spawnable preset management. |
+
+---
+
 ## ⚙️ Advanced Configuration: Game Master Presets
 
 The Game Master's true power comes from the **Preset System**. Located at `unity/Resources/GMPresets.json`, this file defines the "DNA" of entities the AI can spawn.
