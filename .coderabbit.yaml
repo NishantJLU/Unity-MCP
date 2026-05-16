@@ -1,0 +1,19 @@
+# CodeRabbit Configuration for Unity-MCP
+language: "en-US"
+reviews:
+  profile: "chill" # A senior developer tone, helpful but not annoying
+  auto_review:
+    enabled: true
+    drafts: false # Don't review draft PRs
+  tools:
+    github_action_check: true
+chat:
+  enabled: true # Allows you to talk to CodeRabbit in PR comments
+
+# Custom instructions for your specific stack
+instructions: >
+  You are reviewing a Unity-MCP project. 
+  1. For C# code, ensure Unity-specific best practices (e.g., thread safety in HttpListeners, avoiding heavy logic in Update).
+  2. For TypeScript/MCP, ensure strict type safety and valid Zod schemas.
+  3. When suggesting refactors, prioritize readability and the "Senior Developer" perspective.
+  4. Always check if new tools follow the [MCPTool] attribute pattern established in the bridge.
