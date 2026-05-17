@@ -1,72 +1,222 @@
 # 🌌 Unity-MCP Pro: The Agentic Unity Bridge
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/NishantJLU/Unity-MCP?color=00f2ff&style=for-the-badge)](https://github.com/NishantJLU/Unity-MCP/releases)
-[![Status: Production Ready](https://img.shields.io/badge/Status-Production--Ready-00f2ff?style=for-the-badge)](https://github.com/NishantJLU/Unity-MCP)
-[![CodeQL](https://github.com/NishantJLU/Unity-MCP/actions/workflows/codeql.yml/badge.svg)](https://github.com/NishantJLU/Unity-MCP/actions)
-[![Node.js CI](https://github.com/NishantJLU/Unity-MCP/actions/workflows/node.js.yml/badge.svg)](https://github.com/NishantJLU/Unity-MCP/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+![Node.js](https://img.shields.io/badge/node-%3E=18.x-brightgreen.svg)
+![Build](https://img.shields.io/badge/build-passing-success)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![Platform](https://img.shields.io/badge/platform-unity%20editor-white)
 
-**Unity-MCP Pro** is a high-performance bridge that transforms the Unity Editor into an agentic environment. It enables LLMs (like Claude 3.5 Sonnet and Gemini 1.5 Pro) to interact with Unity in real-time for AI-driven level design, scene auditing, and live construction.
+✨ Unity-MCP Pro is a high-performance Model Context Protocol (MCP) server for the Unity Editor that gives AI assistants and custom tools a reliable way to automate scenes, GameObjects, components, physics, and project workflows.
 
----
+Created, maintained, and actively expanded by **NishantJLU**.
 
-## 🚀 Quick Start (3-Minute Setup)
+This repository is the primary home for the current Unity-MCP implementation, including the bridge workflow, automation surface, tooling, and ongoing product improvements.
 
-### 1. Download & Install
-Download the **[Latest Release (v1.0.0)](https://github.com/NishantJLU/Unity-MCP/releases/latest)** and extract it. Double-click **`setup.bat`** to install dependencies automatically.
+## Table of Contents
+- [Features](#-features)
+  - [Scenes & Project](#-scenes--project)
+  - [Hierarchy Management](#-hierarchy-management)
+  - [Components & Properties](#-components--properties)
+  - [AI Vision & Rendering](#-ai-vision--rendering)
+  - [Productivity](#-productivity)
+- [Setup Instructions](#-setup-instructions)
+  - [Prerequisites](#-prerequisites)
+  - [Installation](#-installation)
+  - [Update MCP Config](#-update-mcp-config)
+  - [Running the Server](#-running-the-server)
+- [Usage Guide](#-usage-guide)
+  - [Creating GameObjects](#-creating-gameobjects)
+  - [Working with Components](#-working-with-components)
+  - [AI Vision](#-ai-vision)
+- [Available MCP Tools](#-available-mcp-tools)
+- [For Developers](#-for-developers)
+  - [Project Structure](#-project-structure)
+  - [Building the Project](#-building-the-project)
+  - [Tests](#-tests)
+  - [Contributing](#-contributing)
 
-### 2. Add to Unity
-Drag the `UnityScripts` folder into your Unity project's `Assets` folder. Open **Window > AI > Unity MCP Pro** and click **ESTABLISH LINK**.
+## 📦 Features
 
-### 3. Connect to AI
-Add this snippet to your `claude_desktop_config.json`:
+### 🎥 Scenes & Project
+- List and load scenes within the project
+- Inspect scene settings and global configurations
+- Open/save projects and manage asset database items
+
+### 🧱 Hierarchy Management
+- Create GameObjects, Prefabs, Cameras, and Lights
+- Reorder, rename, delete, parent, and toggle active states
+- Manage Tags, Layers, and static flags for complex scene organization
+
+### 🌀 Components & Properties
+- Add or remove components in real-time
+- Read/write property values via **C# Reflection** (Deep Property Access)
+- Inspect component metadata and state in the Inspector-equivalent view
+
+### 🎨 AI Vision & Rendering
+- Capture live screenshots from the Editor/Game view
+- Adjust camera properties, FOV, and post-processing for visual reasoning
+- Automated scene auditing through visual feedback
+
+### 🧰 Productivity
+- **Main-Thread Dispatcher:** Safely execute commands without crashing Unity
+- **Scene Graph Analytics:** Structured JSON map of the entire object hierarchy
+- Batch operations to minimize overhead and maximize execution speed
+
+## ⚙️ Setup Instructions
+
+### 🛠 Prerequisites
+- Unity Editor (2021.3 LTS or later)
+- Node.js (18+ recommended)
+- npm or yarn package manager
+
+### 📥 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/NishantJLU/Unity-MCP.git
+   cd Unity-MCP
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Build the project**
+   ```bash
+   npm run build
+   ```
+
+4. **Install the Unity Bridge**
+   - Copy the `UnityScripts` folder into your Unity project's `Assets` directory.
+   - This adds the custom Editor Window and bridge listener to your project.
+
+### 🔧 Update MCP Config
+
+Point your MCP client to the built server entry (`unity-mcp-server/index.js`):
+
+**Windows:**
 ```json
 {
   "mcpServers": {
-    "unity-mcp-pro": {
+    "UnityMCPPro": {
       "command": "node",
-      "args": ["C:/PATH/TO/Unity-MCP/unity-mcp-server/index.js"]
+      "args": ["C:\\\\path\\\\to\\\\Unity-MCP\\\\unity-mcp-server\\\\index.js"]
     }
   }
 }
 ```
 
----
+## 👤 Authorship & Credits
 
-## ❓ Why Unity-MCP Pro?
-While basic scripts can move objects, **Unity-MCP Pro** provides a deep, production-grade integration:
-*   **👁️ AI Vision:** AI can "see" through your Editor camera to reason about layout and aesthetics.
-*   **⚡ Reflection-Based:** No need to write new tools. AI can access *any* public variable on *any* component via C# Reflection.
-*   **🛡️ Safety First:** All commands are dispatched via the Main Thread to prevent Editor crashes.
-*   **📊 Full Context:** AI receives a high-fidelity JSON map of your scene hierarchy, tags, and layers.
+- Primary author and maintainer of Unity-MCP Pro: **NishantJLU**
+- This repository reflects original work across the MCP server, C# bridge dispatcher, documentation, and automation capabilities.
 
----
+### ▶️ Running the Server
 
-## 💎 Pro Features
+1. **Start the MCP server**
+   ```bash
+   npm start
+   ```
 
-### AI Vision (Visual Feedback)
-Empower your AI to capture live snapshots of the Editor, allowing it to reason about material properties, lighting, and UI placement visually.
+2. **Open Unity**
 
-### Scene Graph Analytics
-The AI receives a structured map of the entire scene hierarchy, enabling complex architectural reasoning and automated auditing.
+3. **Open the Unity MCP Pro Panel**
+   - In Unity, go to **Window > AI > Unity MCP Pro**
+   - Click the **ESTABLISH LINK** button
+   - The status should change to `LINK_ESTABLISHED`
+   - The bridge communicates via a local high-performance HTTP listener.
 
-### Reflection-Based Control
-Modify deep parameters like Light intensity, Rigidbody mass, or custom script variables without needing pre-defined tools.
+## 🚀 Usage Guide
 
----
+Once the server is running and the Unity MCP panel is active, AI assistants can send structured commands directly into your Unity Editor workflow.
 
-## 🏗️ Technical Architecture
+### 📘 Creating GameObjects
 
-- **The Brain (Node.js):** An MCP server that exposes Unity functionality as structured tools.
-- **The Hand (C#):** A custom Editor window with a high-performance HTTP listener.
-- **Communication:** Low-latency JSON bridge for real-time AI command execution.
+You can create new objects with custom settings such as:
+- Name
+- Primitive Type (Cube, Sphere, etc.)
+- Position, Rotation, Scale
+- Tag and Layer
+Example MCP tool usage:
+```javascript
+create-gameobject({
+  name: "AI_Controlled_Cube",
+  primitiveType: "Cube",
+  position: { x: 0, y: 5, z: 0 },
+  tag: "Untagged"
+});
+```
 
----
+### ✍️ Working with Components
 
-## 💬 Community & Feedback
-*   **Discussion:** Have an idea for a new tool? [Join the Discussion](https://github.com/NishantJLU/Unity-MCP/discussions).
-*   **Bugs:** Report issues [here](https://github.com/NishantJLU/Unity-MCP/issues).
-*   **Support:** If this helps your workflow, please consider giving us a ⭐!
+You can modify any component property via Reflection:
+
+**Transform & Physics:**
+- Adjust Rigidbody mass and drag
+- Modify Transform properties precisely
+- Toggle Gravity and Colliders
+
+**Lights & Rendering:**
+- Change Light intensity, color, and range
+- Modify MeshRenderer materials and shaders
+
+### 👁 AI Vision
+
+You can automate visual workflows with:
+
+**Screenshot Capture:**
+- Take a high-resolution snapshot of the current view
+- Allow the AI to "see" the scene layout for aesthetic adjustments
+- Audit UI placement and visual bugs
+
+## 🛠 Available MCP Tools
+
+### Core
+- `get-scene-graph`, `list-project-assets`
+- `establish-link`, `bridge-status`
+- `execute-batch-commands`
+
+### Hierarchy Management
+- `create-gameobject`, `instantiate-prefab`, `delete-object`
+- `set-object-parent`, `rename-object`, `set-active-state`
+- `set-object-tag`, `set-object-layer`
+
+### Components & Properties
+- `add-component`, `get-component-data`
+- `set-component-property` (Reflection-based deep access)
+- `get-property-metadata`
+
+### AI Vision & Rendering
+- `take-unity-screenshot` (Visual reasoning tool)
+- `get-camera-info`, `set-camera-properties`
+
+### Productivity
+- `find-objects-by-tag`, `find-objects-by-name`
+- `get-scene-analytics`
+
+## 👨‍💻 For Developers
+
+### 🧩 Project Structure
+
+- `unity-mcp-server/index.js`: MCP server implementation (Node.js)
+- `UnityScripts/`: C# bridge and Editor dispatcher logic
+- `setup.bat`: Windows automation helper for installation
+
+### 📦 Building the Project
+
+```bash
+npm run build
+```
+
+### ✅ Tests
+
+```bash
+npm test
+```
+
+### 🤝 Contributing
+
+Contributions are welcome. If you want to improve Unity-MCP Pro, open an issue or submit a pull request with a focused change.
 
 ---
 **Developed by [NishantJLU](https://github.com/NishantJLU)**
