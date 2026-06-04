@@ -169,30 +169,47 @@ You can automate visual workflows with:
 - Allow the AI to "see" the scene layout for aesthetic adjustments
 - Audit UI placement and visual bugs
 
-## 🛠 Available MCP Tools
+## 🛠️ Available MCP Tools
 
-### Core
-- `get-scene-graph`, `list-project-assets`
-- `establish-link`, `bridge-status`
-- `execute-batch-commands`
+Unity-MCP Pro exposes **26 consolidated tools** across Editor Automation, Game Master, Reflection Querying, and Script Generation:
 
-### Hierarchy Management
-- `create-gameobject`, `instantiate-prefab`, `delete-object`
-- `set-object-parent`, `rename-object`, `set-active-state`
-- `set-object-tag`, `set-object-layer`
+### 🎥 Core & Editor Automation
+- `create_unity_object`: Spawns 3D primitives (`Cube`, `Sphere`, `Capsule`, `Cylinder`, `Plane`, `Quad`).
+- `update_unity_transform`: Modifies position, rotation, and scale of objects.
+- `set_unity_material`: Sets material color (RGBA) and smoothness.
+- `add_unity_component`: Dynamically appends any component to a GameObject.
+- `set_unity_property`: Modifies fields and properties reflectively.
+- `parent_unity_object`: Adjusts hierarchy parent/child relationships.
+- `destroy_unity_object`: Permanent undoable destruction of target objects.
+- `create_unity_ui`: Builds UI Canvas overlays containing buttons, text, and images.
+- `set_unity_text`: Sets contents of UI Text, TextMesh, or TextMeshPro components.
+- `get_unity_scene_graph`: Returns a JSON tree of active GameObjects, tags, and states.
+- `list_unity_scene`: Fast scan listing all object names in the scene.
 
-### Components & Properties
-- `add-component`, `get-component-data`
-- `set-component-property` (Reflection-based deep access)
-- `get-property-metadata`
+### 🎨 Visual Reasoning
+- `take_unity_screenshot`: Captures SceneView viewports and returns an inline Base64 PNG block directly to the visual LLM interface.
 
-### AI Vision & Rendering
-- `take-unity-screenshot` (Visual reasoning tool)
-- `get-camera-info`, `set-camera-properties`
+### 🔍 Deep Reflection & Inspection
+- `inspect_gameobject`: Lists all components attached to a target GameObject.
+- `get_component_properties`: Lists all public properties, fields, types, and active values.
 
-### Productivity
-- `find-objects-by-tag`, `find-objects-by-name`
-- `get-scene-analytics`
+### 📁 Project & Assets Database
+- `instantiate_prefab`: Spawns a prefab asset at a given coordinate using its project path (e.g. `Assets/Prefabs/Player.prefab`).
+- `save_scene` / `load_scene`: Saves or opens `.unity` scene paths.
+
+### ⚡ C# Code Injection
+- `compile_csharp_script`: Injects C# classes inheriting from `MonoBehaviour` and compiles them instantly in the editor on the fly.
+
+### 👾 Game Master (Gameplay Integration)
+- `get_game_state`: Exposes runtime clock and player state metadata.
+- `get_presets`: Queries dynamic spawning presets from Resources.
+- `spawn_entity`: Spawns capsule monsters or prop presets.
+- `trigger_world_event`: Emits scene-wide events.
+- `broadcast_narrative`: Appends visual messages.
+- `set_npc_dialogue`: Alters NPC speech lines and moods.
+- `query_nearby_entities`: Lists active entities in a spherical range.
+- `search_assets`: Query expression search on the asset database.
+
 
 ## 👨‍💻 For Developers
 

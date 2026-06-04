@@ -8,7 +8,7 @@ const UNITY_URL = "http://localhost:60432/";
 const server = new Server(
   {
     name: "unity-mcp-server-pro",
-    version: "2.0.0",
+    version: "2.5.0",
   },
   {
     capabilities: {
@@ -18,9 +18,10 @@ const server = new Server(
 );
 
 const tools = [
+  // --- Core / Basic Editor Automation ---
   {
     name: "create_unity_object",
-    description: "Create a primitive (Cube, Sphere, etc.) at a specific location.",
+    description: "Create a primitive object (Cube, Sphere, etc.) at a specific location.",
     inputSchema: {
       type: "object",
       properties: {
@@ -72,7 +73,7 @@ const tools = [
   },
   {
     name: "set_unity_property",
-    description: "Generic tool to set a public property on a component using reflection.",
+    description: "Generic tool to set a public field or property on a component using reflection.",
     inputSchema: {
       type: "object",
       properties: {
@@ -91,9 +92,9 @@ const tools = [
       type: "object",
       properties: {
         childName: { type: "string" },
-        parentName: { type: "string" }
+        parentName: { type: "string", description: "Leave empty or omit to unparent" }
       },
-      required: ["childName", "parentName"]
+      required: ["childName"]
     }
   },
   {
@@ -122,7 +123,7 @@ const tools = [
   },
   {
     name: "set_unity_text",
-    description: "Update the content of an existing UI Text component.",
+    description: "Update the content of an existing UI Text or TextMesh component.",
     inputSchema: {
       type: "object",
       properties: {
@@ -134,7 +135,7 @@ const tools = [
   },
   {
     name: "take_unity_screenshot",
-    description: "Capture a visual snapshot of the Unity Editor. Useful for the AI to see the result of its work.",
+    description: "Capture a visual snapshot of the Unity SceneView / Editor. Returns inline image data directly.",
     inputSchema: { type: "object", properties: {} }
   },
   {
@@ -146,6 +147,161 @@ const tools = [
     name: "list_unity_scene",
     description: "Scan the current scene for all object names.",
     inputSchema: { type: "object", properties: {} }
+  },
+
+  // --- Deep Reflection / Inspection ---
+  {
+    name: "inspect_gameobject",
+    description: "Inspects a GameObject to list all of its attached component types.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "Name of the GameObject" }
+      },
+      required: ["name"]
+    }
+  },
+  {
+    name: "get_component_properties",
+    description: "Uses C# reflection to retrieve all public fields, properties, their types, and values from a component.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: { type: "string", description: "GameObject name" },
+        component: { type: "string", description: "Component type name (e.g., 'Light')" }
+      },
+      required: ["name", "component"]
+    }
+  },
+
+  // --- Project Operations & Scene Management ---
+  {
+    name: "instantiate_prefab",
+    description: "Instantiates a prefab from the asset database at a specific coordinate.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        prefabPath: { type: "string", description: "Asset path starting with 'Assets/' (e.g., 'Assets/Prefabs/Player.prefab')" },
+        name: { type: "string", description: "Optional custom name for the instantiated object" },
+        x: { type: "number" }, y: { type: "number" }, z: { type: "number" }
+      },
+      required: ["prefabPath"]
+    }
+  },
+  {
+    name: "save_scene",
+    description: "Saves the current active scene in the editor.",
+    inputSchema: { type: "object", properties: {} }
+  },
+  {
+    name: "load_scene",
+    description: "Opens an existing scene asset inside the editor.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        scenePath: { type: "string", description: "Asset path starting with 'Assets/' (e.g., 'Assets/Scenes/Main.unity')" }
+      },
+      required: ["scenePath"]
+    }
+  },
+
+  // --- C# Code Injector & Compiler ---
+  {
+    name: "compile_csharp_script",
+    description: "Injects and compiles a C# class inheriting from MonoBehaviour on the fly in Unity.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        className: { type: "string", description: "Exact name of the C# class (must match file name)" },
+        code: { type: "string", description: "Complete C# class implementation" },
+        targetFolder: { type: "string", description: "Folder path relative to project root, defaults to 'Assets/Scripts/AI'" }
+      },
+      required: ["className", "code"]
+    }
+  },
+
+  // --- Game Master & Runtime Controls ---
+  {
+    name: "get_game_state",
+    description: "Get the current state of the game world (player statistics, location, and world parameters).",
+    inputSchema: { type: "object", properties: {} },
+  },
+  {
+    name: "get_presets",
+    description: "List available entity presets (visual or behavioral definitions) configured in Unity.",
+    inputSchema: { type: "object", properties: {} },
+  },
+  {
+    name: "spawn_entity",
+    description: "Spawns an NPC, monster, or prop in the scene, applying visual/behavioral presets.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        type: { type: "string", enum: ["NPC", "Monster", "Prop"] },
+        name: { type: "string" },
+        preset: { type: "string", description: "Preset ID (e.g., 'dark_knight')" },
+        x: { type: "number" }, y: { type: "number" }, z: { type: "number" }
+      },
+      required: ["type", "name"],
+    },
+  },
+  {
+    name: "trigger_world_event",
+    description: "Triggers a world event inside the project scene (e.g. boss battle, storm, dynamic trigger).",
+    inputSchema: {
+      type: "object",
+      properties: {
+        event_name: { type: "string" },
+        intensity: { type: "number", minimum: 0, maximum: 1, description: "Intensity factor" }
+      },
+      required: ["event_name"],
+    },
+  },
+  {
+    name: "broadcast_narrative",
+    description: "Broadcasts a text style narrative message to the Game logs.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        message: { type: "string" },
+        style: { type: "string", enum: ["Standard", "Warning", "Epic", "Whisper"] },
+      },
+      required: ["message"],
+    },
+  },
+  {
+    name: "set_npc_dialogue",
+    description: "Assign dialogue and mood settings to an NPC in the scene.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        target_name: { type: "string", description: "Name of the target NPC GameObject" },
+        text: { type: "string", description: "Dialogue script line" },
+        mood: { type: "string", enum: ["Neutral", "Angry", "Happy", "Mysterious"] },
+      },
+      required: ["target_name", "text"],
+    },
+  },
+  {
+    name: "query_nearby_entities",
+    description: "Scans for all active GameObjects within a radial distance.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        radius: { type: "number", default: 20 }
+      },
+    },
+  },
+  {
+    name: "search_assets",
+    description: "Searches Unity's AssetDatabase for matching assets.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: { type: "string", description: "Asset search expression (e.g. 't:Prefab weapon')" }
+      },
+      required: ["query"]
+    }
   }
 ];
 
@@ -225,9 +381,89 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "list_unity_scene":
         body = { command: "LIST_SCENE" };
         break;
+
+      // Deep Reflection
+      case "inspect_gameobject":
+        body = { command: "INSPECT_GAMEOBJECT", name: args.name };
+        break;
+      case "get_component_properties":
+        body = { command: "GET_COMPONENT_PROPERTIES", name: args.name, component: args.component };
+        break;
+
+      // Project Operations
+      case "instantiate_prefab":
+        body = {
+          command: "INSTANTIATE_PREFAB",
+          prefabPath: args.prefabPath,
+          name: args.name,
+          position: [args.x || 0, args.y || 0, args.z || 0]
+        };
+        break;
+      case "save_scene":
+        body = { command: "SAVE_SCENE" };
+        break;
+      case "load_scene":
+        body = { command: "LOAD_SCENE", scenePath: args.scenePath };
+        break;
+
+      // C# Script compilation
+      case "compile_csharp_script":
+        body = {
+          command: "COMPILE_CSHARP_SCRIPT",
+          className: args.className,
+          code: args.code,
+          targetFolder: args.targetFolder || "Assets/Scripts/AI"
+        };
+        break;
+
+      // Game Master
+      case "get_game_state":
+        body = { command: "GET_STATE" };
+        break;
+      case "get_presets":
+        body = { command: "GET_PRESETS" };
+        break;
+      case "spawn_entity":
+        body = {
+          command: "SPAWN_ENTITY",
+          type: args.type,
+          name: args.name,
+          preset: args.preset,
+          position: [args.x || 0, args.y || 0, args.z || 0]
+        };
+        break;
+      case "trigger_world_event":
+        body = { command: "TRIGGER_EVENT", event_name: args.event_name, intensity: args.intensity || 0.5 };
+        break;
+      case "broadcast_narrative":
+        body = { command: "BROADCAST", message: args.message, style: args.style || "Standard" };
+        break;
+      case "set_npc_dialogue":
+        body = { command: "SET_DIALOGUE", target_name: args.target_name, text: args.text, mood: args.mood || "Neutral" };
+        break;
+      case "query_nearby_entities":
+        body = { command: "QUERY_NEARBY", radius: args.radius || 20 };
+        break;
+      case "search_assets":
+        body = { command: "SEARCH_ASSETS", query: args.query };
+        break;
     }
 
     const res = await axios.post(UNITY_URL, body);
+    
+    // If it's a screenshot, return as inline visual block
+    if (res.data && res.data.status === "success" && res.data.image) {
+      return {
+        content: [
+          {
+            type: "image",
+            data: res.data.image,
+            mimeType: "image/png"
+          }
+        ]
+      };
+    }
+
     return { content: [{ type: "text", text: JSON.stringify(res.data, null, 2) }] };
   } catch (err) {
     return { content: [{ type: "text", text: `Error: ${err.message}` }], isError: true };
@@ -235,4 +471,4 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 const transport = new StdioServerTransport();
-server.connect(transport).then(() => console.error("Unity Pro MCP Running"));
+server.connect(transport).then(() => console.error("Unity Pro Consolidated MCP Running"));
